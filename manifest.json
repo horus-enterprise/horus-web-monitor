@@ -1,0 +1,10 @@
+{
+  "name": "Horus Webmon",
+  "manifest_version": 2,
+  "version": "0.0.1",
+  "description": "Extensão Horus para o monitoramento do tráfego web.",
+  "background": {
+    "scripts": [ "webmon.js" ]
+  },
+  "permissions": [ "history" ]
+}
