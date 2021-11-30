@@ -6,5 +6,10 @@
   "background": {
     "scripts": [ "webmon.js" ]
   },
-  "permissions": [ "history" ]
+  "permissions": [
+    "history"
+  ],
+  "web_accessible_resources": [
+    "./data.json"
+  ]
 }

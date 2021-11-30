@@ -1,17 +1,18 @@
-function printUrls(historyItems) {
-  for (var i = 0; i < historyItems.length; ++i) {
-    let url = historyItems[i].url;
+function printUrls(historyItem) {
+    let url = historyItem.url;
     
-    let time = new Date(historyItems[i].lastVisitTime);
-    
-    let data = time.toLocaleDateString('pt-BR');
+    let time = new Date(historyItem.lastVisitTime);
     
     let hour = time.toLocaleTimeString('pt-BR');
 
-    let mysql = `${time.getFullYear()}-${time.getMonth()}-${time.getDate()}`;
+    let data = `${time.getFullYear()}-${time.getMonth()}-${time.getDate()} ${hour}`;
 
-    alert(`${url} \n---\n ${mysql} ${hour}`);
-  }
+    alert(`${url} \n==============\n ${data}`);
 }
 
-chrome.history.search({ text: '', startTime: 0, maxResults: 999999 }, printUrls);
+chrome.history.onVisited.addListener(printUrls);
+
+// const url = chrome.runtime.getURL('./data.json');
+// fetch(url)
+//     .then((response) => response.json())
+//     .then((json) => Object.keys(json).forEach((item) => alert(`${item}: ${json[item]}`)));
