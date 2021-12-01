@@ -44,7 +44,7 @@ async function getSessionData() {
         const result = await req.json();
         return result;
     } catch (e) {
-        alert(e.message);
+        console.log(e.message);
     }
 }
 
