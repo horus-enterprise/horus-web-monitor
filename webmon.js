@@ -1,18 +1,51 @@
-function printUrls(historyItem) {
-    let url = historyItem.url;
-    
+const api = 'https://horus-dashboard.azurewebsites.net/webmon/cadastrarHistorico';
+// const api = 'http://localhost:3000/webmon/cadastrarHistorico';
+
+const sessionFile = chrome.runtime.getURL('./data.json');
+
+async function start(historyItem) {
+    let url = new URL(historyItem.url).origin;
+
     let time = new Date(historyItem.lastVisitTime);
+    let dateFormatted = time.toISOString();
     
-    let hour = time.toLocaleTimeString('pt-BR');
+    let session = await getSessionData();
 
-    let data = `${time.getFullYear()}-${time.getMonth()}-${time.getDate()} ${hour}`;
+    if (Object.keys(session).length === 0 || !session.idFuncionario || !session.idMaquina) {
+        console.log('Erro: Não foi possível detectar um usuário logado!');
+        return;
+    }
 
-    alert(`${url} \n==============\n ${data}`);
+    const data = {
+        idFuncionario: session.idFuncionario,
+        idMaquina: session.idMaquina,
+        url: url,
+        dataHora: dateFormatted
+    }
+
+    fetch(api, {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+        .then(res => {
+            console.log('Status: ' + res.status);
+        })
+        .catch(err => {
+            console.log('Erro: ' + err.message);
+        });
 }
 
-chrome.history.onVisited.addListener(printUrls);
+async function getSessionData() {
+    try {
+        const req = await fetch(sessionFile);
+        const result = await req.json();
+        return result;
+    } catch (e) {
+        alert(e.message);
+    }
+}
 
-// const url = chrome.runtime.getURL('./data.json');
-// fetch(url)
-//     .then((response) => response.json())
-//     .then((json) => Object.keys(json).forEach((item) => alert(`${item}: ${json[item]}`)));
+chrome.history.onVisited.addListener(start);
